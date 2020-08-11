@@ -1,0 +1,59 @@
+<launch>
+  <arg name="time" value="0.1" />
+  <arg name="k" value="0.5" />
+
+  <node pkg="beginner_tutorials" name="generator" type="generator.py" args="$(arg time) 1 0">
+    <remap from="output" to="generator_output"/>
+  </node>
+  
+  <node pkg="beginner_tutorials" name="power1" type="power.py">
+    <remap from="input" to="generator_output"/>
+    <remap from="output" to="power1_output"/>
+  </node>
+
+  <node pkg="beginner_tutorials" name="deriv1" type="derivative.py" args="$(arg time)">
+    <remap from="input" to="power1_output"/>
+    <remap from="output" to="deriv1_output"/>
+  </node>
+
+  <node pkg="beginner_tutorials" name="power2" type="power.py">
+    <remap from="input" to="deriv1_output"/>
+    <remap from="output" to="power2_output"/>
+  </node>
+
+  <node pkg="beginner_tutorials" name="deriv2" type="derivative.py" args="$(arg time)">
+    <remap from="input" to="power2_output"/>
+    <remap from="output" to="deriv2_output"/>
+  </node>
+
+  <node pkg="beginner_tutorials" name="gain" type="gain.py" args="$(arg k)">
+    <remap from="input" to="deriv2_output"/>
+    <remap from="output" to="gain_output"/>
+  </node>
+
+  <node pkg="beginner_tutorials" name="logger1" type="logger.py">
+    <remap from="input" to="generator_output"/>
+  </node>  
+
+  <node pkg="beginner_tutorials" name="logger2" type="logger.py">
+    <remap from="input" to="gain_output"/>
+  </node>
+   
+
+  <node pkg="beginner_tutorials" name="generator2" type="generator.py" args="0.2 0.5 0.2">
+    <remap from="output" to="generator2_output"/>
+  </node>
+  
+  <node pkg="beginner_tutorials" name="sum" type="sum.py">
+    <remap from="input1" to="generator_output"/>
+    <remap from="input2" to="generator2_output"/>
+    <remap from="output" to="sum_output"/>
+  </node>
+
+
+  <node pkg="beginner_tutorials" name="logger_sum" type="logger.py">
+    <remap from="input" to="sum_output"/>
+  </node>
+
+
+</launch>
